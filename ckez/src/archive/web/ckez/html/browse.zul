@@ -8,20 +8,21 @@
 		.ckImg .z-toolbarbutton {
 			height: auto;
 			vertical-align: middle;
+			margin: 3px;
 		}
 		.ckImg .z-toolbarbutton-cnt img,
 		.ckImg .z-toolbarbutton-content img {
 			display:block;
 			max-height:100px;
 			max-width:100px;
-			margin:0 auto;
+			margin:3px auto;
 		}
 		.ckImg .z-toolbarbutton-cnt,
 		.ckImg .z-toolbarbutton-content {
 			text-align:center;
 		}
 		.ckImg .z-toolbarbutton-content {
-			padding: 2;
+			padding: 0px;
 		}
 		.ckImg .z-toolbarbutton-over {
 			background-color:#DFF1FF;

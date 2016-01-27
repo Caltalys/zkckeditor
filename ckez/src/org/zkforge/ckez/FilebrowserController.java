@@ -69,8 +69,8 @@ public class FilebrowserController extends GenericForwardComposer {
 		if (Strings.isBlank(url)) return;
 		
 		url = getFolderUrl(url);
-		if (application.getResourcePaths(url) == null)
-			throw new UiException("Folder not found: " + url);
+		//if (application.getResourcePaths(url) == null)
+			//throw new UiException("Folder not found: " + url);
 		
 		Map rootFolderMap = new TreeMap();
 		Map map = new TreeMap();
@@ -109,14 +109,23 @@ public class FilebrowserController extends GenericForwardComposer {
 	}
 	
 	private Map parseFolders(String path, Map parentFolderMap) {
-		
-		Iterator it = application.getResourcePaths(path).iterator();
+		String _path = path;
+		if (!path.endsWith("/")) {
+		     _path += "/";
+		}
+		java.util.Set<String> paths = new java.util.HashSet<String>();
+		for (java.io.File file : new java.io.File(org.zkoss.util.resource.Labels.getLabel("filestore.root") + path).listFiles()) {
+		     paths.add(path + file.getName() + (file.isDirectory() ? "/" : ""));
+		}
+
+		                
+		Iterator it = paths.iterator();
 		while (it.hasNext()) {
 			String pagePath = String.valueOf(it.next());
 			if (pagePath.endsWith("/")) {
 				String folderName = pagePath.substring(0, pagePath.length() - 1);
 				folderName = folderName.substring(folderName.lastIndexOf("/") + 1);
-				if (shallShowFolder(folderName))
+				//if (shallShowFolder(folderName))
 					parentFolderMap.put(folderName, parseFolders(pagePath, new TreeMap()));
 			} else {
 				String fileName = pagePath.substring(pagePath.lastIndexOf("/") + 1);
@@ -176,6 +185,14 @@ public class FilebrowserController extends GenericForwardComposer {
 	
 	
 	private void showImages(Map map) {
+		StringBuilder url = new StringBuilder();
+		javax.servlet.http.HttpServletRequest req = (javax.servlet.http.HttpServletRequest) org.zkoss.zk.ui.Executions.getCurrent()
+		                                .getNativeRequest();
+		url.append(req.getScheme()).append("://").append(req.getServerName());
+		if ((req.getServerPort() != 80) && (req.getServerPort() != 443)) {
+		    url.append(":").append(req.getServerPort());
+		}
+
 		for (Iterator it = map.entrySet().iterator(); it.hasNext();) {
 			Map.Entry me = (Map.Entry) it.next();
 			Object value = me.getValue();
@@ -184,7 +201,7 @@ public class FilebrowserController extends GenericForwardComposer {
 			String swfPath = "";
 			if (path.endsWith("swf"))
 				swfPath = "~./ckez/img/flashIcon.jpg";
-			Toolbarbutton tb = new Toolbarbutton(String.valueOf(me.getKey()), "".equals(swfPath)? path: swfPath);
+			Toolbarbutton tb = new Toolbarbutton(String.valueOf(me.getKey()), "".equals(swfPath)? url+ path: swfPath);
 			tb.addEventListener("onClick", new EventListener() {
 				public void onEvent(Event event) throws Exception {
 					if (selBtn !=null)
@@ -199,6 +216,9 @@ public class FilebrowserController extends GenericForwardComposer {
 				CKEditorFuncNum+", '" + execution.encodeURL(path) + "'); window.close(); ";
 			tb.setWidgetListener("onDoubleClick",script);
 			
+			tb.setStyle("width:110px; border:1px solid #e3e3e3; padding:1px; overflow: hidden");
+			String filename = path.substring(path.lastIndexOf("/")+1, path.length());
+			tb.setTooltiptext(filename);
 			cntDiv.appendChild(tb);
 		}
 		

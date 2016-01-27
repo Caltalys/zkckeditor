@@ -450,11 +450,18 @@ public class CKeditor extends AbstractComponent {
 	}
 	
 	private static final CkezFileWriter _defWriter = new CkezFileWriter() {
+		String unAccent(String s) {
+			 return java.util.regex.Pattern.compile("\\p{InCombiningDiacriticalMarks}+").matcher(java.text.Normalizer
+			 		    .normalize(s.toLowerCase(), java.text.Normalizer.Form.NFD)).replaceAll("").replaceAll("đ", "d")
+			 		    .replaceAll(" ", "").replaceAll("[^a-zA-Z0-9 -]", "");
+		}
 
 		public String writeFileItem(String uploadUrl, String realPath,
 				FileItem item, String type) {
 
-			String fileName = item.getName();
+			String itemName = unAccent(item.getName().substring(0, item.getName().lastIndexOf(".")))
+					 					     + item.getName().substring(item.getName().lastIndexOf("."));
+			String fileName = new java.util.Date().getTime()+"_"+itemName;
 			if (fileName == null || fileName.isEmpty()) {
 				throw new UiException("Empty filename: " + fileName);
 			}

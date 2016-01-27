@@ -75,7 +75,7 @@ public class CkezUploadExtension implements AuExtension {
 			
 			FileItem item = parseFileItem(request);
 			url = FilebrowserController.getFolderUrl(url);
-			String path = request.getContextPath() + url;
+			String path = /*request.getContextPath() +*/ url;
 			
 			if (item != null) {
 				final Desktop desktop = ((WebAppCtrl)sess.getWebApp())
@@ -84,7 +84,7 @@ public class CkezUploadExtension implements AuExtension {
 				String nextURI = "~./ckez/html/fileupload-done.html.dsp";
 				final Map attrs = new HashMap();
 				attrs.put("CKEditorFuncNum", request.getParameter("CKEditorFuncNum"));
-				String serverPath = ckez.writeFileItem(path, desktop.getWebApp().getRealPath(url), item, type);
+				String serverPath = ckez.writeFileItem(path, org.zkoss.util.resource.Labels.getLabel("filestore.root") + url, item, type);
 				String itemName = item.getName();
 				attrs.put("path", serverPath.replace(itemName, URLEncoder.encode(itemName, "UTF-8").replace("+", "%20")));
 				Servlets.forward(_ctx, request, response,
