@@ -50,7 +50,7 @@ public class FilebrowserController extends GenericForwardComposer {
 											"ascx", "jsp", "cfm", "cfc", "pl", 
 											"bat", "exe", "dll", "reg", "cgi", "asmx"};
 	private static final String[] FLASH = {"swf"};
-	private static final String[] MEDIA = {"swf", "fla", "jpg", "gif", "jpeg", "png", "avi", "mpg", "mpeg"}; 
+	private static final String[] MEDIA = {"swf", "fla", "jpg", "gif", "jpeg", "png", "avi", "mpg", "mpeg", "mp4", "WebM", "flv"}; 
 	
 	private String type = "";
 	private Map fileFilterMap;
@@ -114,7 +114,13 @@ public class FilebrowserController extends GenericForwardComposer {
 		     _path += "/";
 		}
 		java.util.Set<String> paths = new java.util.HashSet<String>();
-		for (java.io.File file : new java.io.File(org.zkoss.util.resource.Labels.getLabel("filestore.root") + path).listFiles()) {
+		
+		String filestore = org.zkoss.util.resource.Labels.getLabel("filestore.root");
+		String filepath = filestore + path;
+		System.out.println("filestore: " + filestore);
+		System.out.println("path: " + path);
+		System.out.println("filepath: " + filepath);
+		for (java.io.File file : new java.io.File(filepath).listFiles()) {
 		     paths.add(path + file.getName() + (file.isDirectory() ? "/" : ""));
 		}
 
@@ -165,6 +171,8 @@ public class FilebrowserController extends GenericForwardComposer {
 		else if (type.equals("Files")) {
 			for (int i = 0, j = FLASH.length; i < j; i++)
 				fileFilterMap.put(FLASH[i], "true");
+			for (int i = 0, j = MEDIA.length; i < j; i++)
+				fileFilterMap.put(MEDIA[i], "true");
 			for (int i = 0, j = IMAGES.length; i < j; i++)
 				fileFilterMap.put(IMAGES[i], "true");
 			for (int i = 0, j = FILES.length; i < j; i++)
@@ -210,6 +218,7 @@ public class FilebrowserController extends GenericForwardComposer {
 					selBtn.setSclass("sel");
 				}
 			});
+			
 			int CKEditorFuncNum = 1;
 			CKEditorFuncNum = new Integer(((String[])param.get("CKEditorFuncNum"))[0]).intValue();
 			String script = "window.opener.CKEDITOR.tools.callFunction("+
@@ -220,6 +229,8 @@ public class FilebrowserController extends GenericForwardComposer {
 			String filename = path.substring(path.lastIndexOf("/")+1, path.length());
 			tb.setTooltiptext(filename);
 			cntDiv.appendChild(tb);
+			System.out.println("path: " + path);
+			System.out.println("filename: " + filename);
 		}
 		
 	}

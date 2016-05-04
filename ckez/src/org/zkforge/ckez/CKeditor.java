@@ -36,7 +36,7 @@ import org.zkoss.zk.ui.event.InputEvent;
  * @author jimmy
  * @version $Revision: 3.0 $ $Date: 2009/10/7 17:56:45 $
  */
-public class CKeditor extends AbstractComponent {
+public class CKeditor extends AbstractComponent{
 	private static String _fileBrowserTempl = "~./ckez/html/browse.zul";
 	private static String _fileUploadHandlePage = "";
 	
@@ -63,6 +63,8 @@ public class CKeditor extends AbstractComponent {
 	private String _filebrowserImageUploadUrl;
 	
 	private String _filebrowserFlashUploadUrl;
+	
+	private String _filebrowserVideoBrowseUrl;
 	
 	private CkezFileWriter fileWriter;
 
@@ -328,6 +330,19 @@ public class CKeditor extends AbstractComponent {
 		return _filebrowserBrowseUrl;
 	}
 	
+	
+	
+	public String getFilebrowserVideoBrowseUrl() {
+		return _filebrowserVideoBrowseUrl;
+	}
+
+	public void setFilebrowserVideoBrowseUrl(String _filebrowserVideoBrowseUrl) {
+		if (!Objects.equals(_filebrowserVideoBrowseUrl, _filebrowserVideoBrowseUrl)) {
+			this._filebrowserVideoBrowseUrl = _filebrowserVideoBrowseUrl;
+			smartUpdate("filebrowserVideoBrowseUrl", _filebrowserVideoBrowseUrl);
+		}
+	}
+
 	/**
 	 * Set the location of the folder for the file browser, that should be launched 
 	 * when "Browse Server" button is pressed in the Image dialog.
