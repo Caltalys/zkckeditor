@@ -45,7 +45,7 @@ public class FilebrowserController extends GenericForwardComposer {
 	private static final String[] EXCLUDE_FOLDERS = {"WEB-INF","META-INF"};
 	private static final String[] EXCLUDE_FILES = {};
 	private static final String[] IMAGES = {"gif","jpg","jpeg","png"};
-	private static final String[] FILES = {"htm", "html", "php", "php3", 
+	private static final String[] FILES = {"htm", "html", "php", "php3", "pdf", "doc", "docx", "xls", "xlsx",
 											"php5", "phtml", "asp", "aspx", 
 											"ascx", "jsp", "cfm", "cfc", "pl", 
 											"bat", "exe", "dll", "reg", "cgi", "asmx"};
@@ -206,10 +206,26 @@ public class FilebrowserController extends GenericForwardComposer {
 			Object value = me.getValue();
 			if (value instanceof Map) continue;
 			String path = String.valueOf(value);
-			String swfPath = "";
-			if (path.endsWith("swf"))
-				swfPath = "~./ckez/img/flashIcon.jpg";
-			Toolbarbutton tb = new Toolbarbutton(String.valueOf(me.getKey()), "".equals(swfPath)? url+ path: swfPath);
+			String ortherPath = "";
+			if (path.endsWith("swf")) {
+				ortherPath = "~./ckez/img/flashIcon.jpg";
+			} else if (path.endsWith("doc") || path.endsWith("docx")) {
+				ortherPath = "~./ckez/img/file_doc.png";
+			} else if (path.endsWith("xls") || path.endsWith("xlsx")) {
+				ortherPath = "~./ckez/img/file_xls.png";
+			} else if (path.endsWith("ppt") || path.endsWith("pptx")) {
+				ortherPath = "~./ckez/img/file_ppt.png";
+			} else if (path.endsWith("pdf")) {
+				ortherPath = "~./ckez/img/file_pdf.png";
+			} else if (path.endsWith("rar") || path.endsWith("zip")) {
+				ortherPath = "~./ckez/img/file_rar.png";
+			} else if (path.endsWith("mp4")) {
+				ortherPath = "~./ckez/img/file_mp4.png";
+			} else if (path.endsWith("avi") || path.endsWith("mpg") || path.endsWith("mpeg") 
+					|| path.endsWith("WebM") || path.endsWith("flv")) {
+				ortherPath = "~./ckez/img/file_video.png";
+			} 
+			Toolbarbutton tb = new Toolbarbutton(String.valueOf(me.getKey()), "".equals(ortherPath)? url+ path: ortherPath);
 			tb.addEventListener("onClick", new EventListener() {
 				public void onEvent(Event event) throws Exception {
 					if (selBtn !=null)
