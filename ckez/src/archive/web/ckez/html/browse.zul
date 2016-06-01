@@ -43,7 +43,11 @@
 	<borderlayout apply="org.zkforge.ckez.FilebrowserController">
 		<west size="20%" splittable="true" autoscroll="true">
 			<tree id="tree" zclass="z-filetree" sclass="ckTree"/>
-		</west>
+		</west>	
+		<north>
+			<button label="upload" id="testUpload" upload="true,maxsize=51200" 
+				onUpload="@command('uploadFile')"/>
+		</north>
 		<center autoscroll="true">
 			<div id="cntDiv" sclass="ckImg"/>
 		</center>

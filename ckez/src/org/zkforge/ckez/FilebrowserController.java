@@ -15,6 +15,7 @@
  }}IS_RIGHT
  */
 package org.zkforge.ckez;
+import java.io.File;
 /**
  * 
  * @author Jimmy Shiau
@@ -26,15 +27,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.zkoss.io.Files;
 import org.zkoss.lang.Strings;
+import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zul.Button;
 import org.zkoss.zul.DefaultTreeModel;
 import org.zkoss.zul.DefaultTreeNode;
 import org.zkoss.zul.Div;
+import org.zkoss.zul.Fileupload;
 import org.zkoss.zul.Toolbarbutton;
 import org.zkoss.zul.Tree;
 import org.zkoss.zul.Treeitem;
@@ -53,11 +59,15 @@ public class FilebrowserController extends GenericForwardComposer {
 	private static final String[] MEDIA = {"swf", "fla", "jpg", "gif", "jpeg", "png", "avi", "mpg", "mpeg", "mp4", "WebM", "flv"}; 
 	
 	private String type = "";
+	private String selectFolder = "";
 	private Map fileFilterMap;
+	private Treeitem selectedItem;
 	
 	private Tree tree;
 	private Div cntDiv;
+	private Button testUpload;
 	private Toolbarbutton selBtn;
+	
 	
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
@@ -69,8 +79,6 @@ public class FilebrowserController extends GenericForwardComposer {
 		if (Strings.isBlank(url)) return;
 		
 		url = getFolderUrl(url);
-		//if (application.getResourcePaths(url) == null)
-			//throw new UiException("Folder not found: " + url);
 		
 		Map rootFolderMap = new TreeMap();
 		Map map = new TreeMap();
@@ -80,9 +88,31 @@ public class FilebrowserController extends GenericForwardComposer {
 		
 		tree.setItemRenderer(new ExplorerTreeitemRenderer());
 		tree.setModel(new DefaultTreeModel(new DefaultTreeNode("ROOT",initTreeModel(rootFolderMap, new ArrayList()))));
-		
+	}
+	
+	public void onUpload$testUpload(UploadEvent event) throws Exception {
+		Media media = event.getMedia();
+		String filePath = getFolderUpload() + media.getName();
+		File file = new File(filePath);
+		Files.copy(file, media.getStreamData());
+		cntDiv.getChildren().clear();
+		Map map = parseFolders(selectFolder, new TreeMap());
 		showImages(map);
 	}
+	
+	public void onSelect$tree(){
+		cntDiv.getChildren().clear();
+		selectedItem = tree.getSelectedItem();
+		Treeitem item = selectedItem;;
+		Map map = (Map)item.getValue();	
+		selectFolder = item.getLabel() + "/";
+		while (item.getParentItem() != null) {
+			item = item.getParentItem();
+			selectFolder = item.getLabel() + "/" + selectFolder;
+		}
+		showImages(map);
+	}
+	
 
 	/*package*/ static String getFolderUrl(String url) {
 //		int index = url.lastIndexOf(";jsessionid");
@@ -109,6 +139,7 @@ public class FilebrowserController extends GenericForwardComposer {
 	}
 	
 	private Map parseFolders(String path, Map parentFolderMap) {
+		//System.out.println("parseFolders: " + parentFolderMap);
 		String _path = path;
 		if (!path.endsWith("/")) {
 		     _path += "/";
@@ -117,10 +148,9 @@ public class FilebrowserController extends GenericForwardComposer {
 		
 		String filestore = org.zkoss.util.resource.Labels.getLabel("filestore.root");
 		String filepath = filestore + path;
-		System.out.println("filestore: " + filestore);
-		System.out.println("path: " + path);
-		System.out.println("filepath: " + filepath);
+		//System.out.println("filepath: " + filepath);
 		for (java.io.File file : new java.io.File(filepath).listFiles()) {
+			//System.out.println("fileName: " + file.getName());
 		     paths.add(path + file.getName() + (file.isDirectory() ? "/" : ""));
 		}
 
@@ -143,6 +173,8 @@ public class FilebrowserController extends GenericForwardComposer {
 		return parentFolderMap;
 	}
 	
+	
+	
 	private boolean shallShowFolder(String folderName) {
 		Object obj = fileFilterMap.get(folderName);
 		return (obj == null) ? true : Boolean.valueOf((String) obj).booleanValue();
@@ -159,8 +191,7 @@ public class FilebrowserController extends GenericForwardComposer {
 		for (int i = 0, j = EXCLUDE_FOLDERS.length; i < j; i++)
 			fileFilterMap.put(EXCLUDE_FOLDERS[i], "false");
 		for (int i = 0, j = EXCLUDE_FILES.length; i < j; i++)
-			fileFilterMap.put(EXCLUDE_FILES[i], "false");
-		
+			fileFilterMap.put(EXCLUDE_FILES[i], "false");		
 		
 		if (type.equals("Flash"))
 			for (int i = 0, j = FLASH.length; i < j; i++)
@@ -183,12 +214,15 @@ public class FilebrowserController extends GenericForwardComposer {
 	}
 	
 
-	public void onSelect$tree(){
-		cntDiv.getChildren().clear();
-		Treeitem item = tree.getSelectedItem();
-		Map map = (Map)item.getValue();
-		
-		showImages(map);
+	
+	
+	private String getFolderUpload() {
+		String filestore = org.zkoss.util.resource.Labels.getLabel("filestore.root");
+		String filefolder = org.zkoss.util.resource.Labels.getLabel("filestore.folder");
+		if (selectFolder.equals("")) {
+			return filestore + filefolder + "/";
+		}
+		return filestore + selectFolder;
 	}
 	
 	
@@ -245,8 +279,6 @@ public class FilebrowserController extends GenericForwardComposer {
 			String filename = path.substring(path.lastIndexOf("/")+1, path.length());
 			tb.setTooltiptext(filename);
 			cntDiv.appendChild(tb);
-			System.out.println("path: " + path);
-			System.out.println("filename: " + filename);
 		}
 		
 	}
