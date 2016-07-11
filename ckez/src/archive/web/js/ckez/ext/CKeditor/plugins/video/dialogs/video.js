@@ -207,10 +207,11 @@ CKEDITOR.dialog.add( 'video', function ( editor )
 								{
 									var dialog = this.getDialog(),
 										newUrl = this.getValue();
-									if (newUrl.indexOf("/nddk-portlet") > -1) {
-					                	newUrl = newUrl.replace("/nddk-portlet", "");
-					                    this.setValue(newUrl);
-					                }
+									if (newUrl.indexOf("-portlet") > -1) {
+	                                	var app = newUrl.split("/")[1];
+	                                    newUrl = newUrl.replace("/" + app, "");
+	                                    this.setValue(newUrl);
+	                                }
 									//Update preview image
 									if ( newUrl.length > 0 )	//Prevent from load before onShow
 									{
@@ -282,10 +283,11 @@ CKEDITOR.dialog.add( 'video', function ( editor )
 								onChange : function()
 								{
 									var newUrl = this.getValue();
-									if (newUrl.indexOf("/nddk-portlet") > -1) {
-					                	newUrl = newUrl.replace("/nddk-portlet", "");
-					                    this.setValue(newUrl);
-					                }
+									if (newUrl.indexOf("-portlet") > -1) {
+	                                	var app = newUrl.split("/")[1];
+	                                    newUrl = newUrl.replace("/" + app, "");
+	                                    this.setValue(newUrl);
+	                                }
 								}
 							},
 							{
@@ -328,11 +330,12 @@ CKEDITOR.dialog.add( 'video', function ( editor )
 								setup : loadSrc,
 								onChange : function()
 								{
-									var newUrl = this.getValue();
-									if (newUrl.indexOf("/nddk-portlet") > -1) {
-					                	newUrl = newUrl.replace("/nddk-portlet", "");
-					                    this.setValue(newUrl);
-					                }
+									var newUrl = this.getValue();									
+									if (newUrl.indexOf("-portlet") > -1) {
+	                                	var app = newUrl.split("/")[1];
+	                                    newUrl = newUrl.replace("/" + app, "");
+	                                    this.setValue(newUrl);
+	                                }
 								}
 							},
 							{
